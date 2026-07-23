@@ -1,6 +1,6 @@
 [
   {
-    "name": "/help explains the bot in plain language",
+    "name": "/help explains credential delivery",
     "steps": [
       {
         "send": { "text": "/help" },
@@ -8,7 +8,7 @@
           {
             "method": "sendMessage",
             "payload": {
-              "text": "ℹ️ Tap /start to open the menu, then pick what you want from the buttons.\n\nEverything in this bot is reachable by tapping — you don't need to remember any commands."
+              "text": "How this bot works\n\nTeachers upload a CSV of student logins and passwords. The bot matches each identifier to a Telegram user who has started the bot, then sends credentials in a private message.\n\nStudents: tap /start, then Link email if your school matches by email.\nAdmins: use Upload CSV, Last job, and Failure report from the menu.\n\nCSV format (header required):\nidentifier,password\n@username,secret\nstudent@school.edu,secret"
             }
           }
         ]

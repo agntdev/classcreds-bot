@@ -1,0 +1,40 @@
+[
+  {
+    "name": "Settings menu shows owner controls",
+    "steps": [
+      {
+        "send": { "callback": "settings:show" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Owner settings\n\nRetries per delivery: 3\nRetry delay: 500 ms\nRate limit pause: 50 ms\nRetention: 30 days\nEmail matching: on\nExtra admin ids: (env whitelist only — none stored here)"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "toggle email matching",
+    "steps": [
+      {
+        "send": { "callback": "settings:show" },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": { "callback": "settings:toggle_email" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Owner settings\n\nRetries per delivery: 3\nRetry delay: 500 ms\nRate limit pause: 50 ms\nRetention: 30 days\nEmail matching: off\nExtra admin ids: (env whitelist only — none stored here)"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
