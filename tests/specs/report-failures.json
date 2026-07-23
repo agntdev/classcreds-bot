@@ -1,19 +1,48 @@
 [
   {
-    "name": "View failure details",
+    "name": "View failure details with no jobs",
     "steps": [
       {
+        "send": { "callback": "report:failures" },
         "expect": [
+          { "method": "answerCallbackQuery" },
           {
             "method": "sendMessage",
             "payload": {
-              "text": "Request CSV of failed deliveries from last job"
+              "text": "No jobs yet — upload a CSV first, then check failures here."
             }
           }
-        ],
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Failure report after unmatched identifier",
+    "steps": [
+      {
+        "send": { "text": "/upload", "chatId": 1, "userId": 1 },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
         "send": {
-          "callback": "report:failures"
-        }
+          "text": "identifier,password\n@nobody_here_xyz,secret",
+          "chatId": 1,
+          "userId": 1
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "report:failures", "chatId": 1, "userId": 1 },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Failure report for job_1: 1 row(s). Fix these and re-upload."
+            }
+          },
+          { "method": "sendDocument" }
+        ]
       }
     ]
   }

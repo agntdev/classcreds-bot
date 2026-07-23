@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Link email flow saves address",
+    "steps": [
+      {
+        "send": { "text": "/start" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "register:email" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Send your school email address. We'll use it only to match credentials from your teacher."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "student@school.edu" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Email linked: student@school.edu\n\nYour teacher can now match credentials to this account."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "invalid email is rejected",
+    "steps": [
+      {
+        "send": { "text": "/start" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "register:email" },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": { "text": "not-an-email" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "That doesn't look like an email. Send something like name@school.edu, or tap Cancel."
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

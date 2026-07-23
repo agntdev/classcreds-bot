@@ -1,19 +1,81 @@
 [
   {
-    "name": "/status",
+    "name": "/status empty state when no jobs",
     "steps": [
       {
+        "send": { "text": "/status" },
         "expect": [
           {
             "method": "sendMessage",
             "payload": {
-              "text": "View last job summary and delivery statistics"
+              "text": "No jobs yet — tap Upload CSV to process your first credential file."
             }
           }
-        ],
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Last job menu button empty state",
+    "steps": [
+      {
+        "send": { "callback": "status:show" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "No jobs yet — tap Upload CSV to process your first credential file."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "/status shows last job summary after upload",
+    "steps": [
+      {
         "send": {
-          "text": "/status"
-        }
+          "update": {
+            "update_id": 1,
+            "message": {
+              "message_id": 1,
+              "date": 0,
+              "chat": {
+                "id": 300,
+                "type": "private",
+                "first_name": "S",
+                "username": "stu300"
+              },
+              "from": {
+                "id": 300,
+                "is_bot": false,
+                "first_name": "S",
+                "username": "stu300"
+              },
+              "text": "/start",
+              "entities": [{ "type": "bot_command", "offset": 0, "length": 6 }]
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "text": "/upload", "chatId": 1, "userId": 1 },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "text": "identifier,password\n@stu300,p",
+          "chatId": 1,
+          "userId": 1
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "text": "/status", "chatId": 1, "userId": 1 },
+        "expect": [{ "method": "sendMessage" }]
       }
     ]
   }

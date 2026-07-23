@@ -1,13 +1,36 @@
 [
   {
-    "name": "/start replies with the welcome + main menu",
+    "name": "/start replies with admin dashboard + main menu",
     "steps": [
       {
         "send": { "text": "/start" },
         "expect": [
           {
             "method": "sendMessage",
-            "payload": { "text": "👋 Welcome! Tap a button below to get started." }
+            "payload": {
+              "text": "Student Credential Distributor\n\nUpload a CSV to send private credentials, then review delivery status.\nTap a button below to begin."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Back to menu re-renders the dashboard",
+    "steps": [
+      {
+        "send": { "text": "/start" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "menu:main" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Student Credential Distributor\n\nUpload a CSV to send private credentials, then review delivery status.\nTap a button below to begin."
+            }
           }
         ]
       }

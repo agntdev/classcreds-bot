@@ -1,19 +1,130 @@
 [
   {
-    "name": "/upload",
+    "name": "/upload prompts for CSV",
     "steps": [
       {
+        "send": { "text": "/upload" },
         "expect": [
           {
             "method": "sendMessage",
             "payload": {
-              "text": "Initiate CSV upload workflow"
+              "text": "Send a CSV file (or paste the CSV text) with two columns:\n\nidentifier,password\n@student,secret123\n\nIdentifier can be a Telegram username or school email. Tap Cancel to stop."
             }
           }
-        ],
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Upload CSV menu button prompts for file",
+    "steps": [
+      {
+        "send": { "callback": "upload:start" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Send a CSV file (or paste the CSV text) with two columns:\n\nidentifier,password\n@student,secret123\n\nIdentifier can be a Telegram username or school email. Tap Cancel to stop."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "CSV missing header is rejected",
+    "steps": [
+      {
+        "send": { "text": "/upload" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "text": "alice,pass1\nbob,pass2" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Missing or invalid header row. First line must be: identifier,password\n\nFix the file and send it again."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "end-to-end CSV upload delivers and reports",
+    "steps": [
+      {
         "send": {
-          "text": "/upload"
-        }
+          "update": {
+            "update_id": 1,
+            "message": {
+              "message_id": 1,
+              "date": 0,
+              "chat": {
+                "id": 200,
+                "type": "private",
+                "first_name": "Student",
+                "username": "stu200"
+              },
+              "from": {
+                "id": 200,
+                "is_bot": false,
+                "first_name": "Student",
+                "username": "stu200"
+              },
+              "text": "/start",
+              "entities": [{ "type": "bot_command", "offset": 0, "length": 6 }]
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "text": "/upload", "chatId": 1, "userId": 1 },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "text": "identifier,password\n@stu200,s3cret!\nunknown_user,x",
+          "chatId": 1,
+          "userId": 1
+        },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Parsed 2 row(s). Matching students and delivering…"
+            }
+          },
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Your school credentials\n\nLogin: @stu200\nPassword: s3cret!\n\nKeep this message private. Change the password after first sign-in if your school requires it."
+            }
+          },
+          { "method": "sendMessage" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "upload cancel returns to idle",
+    "steps": [
+      {
+        "send": { "callback": "upload:start" },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": { "callback": "upload:cancel" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          {
+            "method": "editMessageText",
+            "payload": { "text": "Upload cancelled." }
+          }
+        ]
       }
     ]
   }
